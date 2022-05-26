@@ -1,7 +1,9 @@
 package com.renatom.minhasfinancas.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.renatom.minhasfinancas.exception.RegraNegocioException;
 import com.renatom.minhasfinancas.model.entity.Usuario;
 import com.renatom.minhasfinancas.model.repository.UsuarioRepository;
 import com.renatom.minhasfinancas.service.UsuarioService;
@@ -11,6 +13,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	
 	private UsuarioRepository repository;	
 
+	@Autowired
 	public UsuarioServiceImpl(UsuarioRepository repository) {
 		super();
 		this.repository = repository;
@@ -30,7 +33,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	public void validarEmail(String email) {
-		// TODO Auto-generated method stub
+		boolean existe = repository.existsByEmail(email);
+		if(existe) {
+//			Verificamos se o email existe, se existir lança uma exception, 
+//			Criada Classe RegraNegocioException no pacote de exception
+			throw new RegraNegocioException("Já existe um usuário cadastrado com esse email.");
+		}
 		
 	}
 
