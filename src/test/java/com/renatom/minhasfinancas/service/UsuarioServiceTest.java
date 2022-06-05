@@ -2,16 +2,19 @@ package com.renatom.minhasfinancas.service;
 
 import java.util.Optional;
 
+import org.aspectj.lang.annotation.Before;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.event.annotation.BeforeTestClass;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.renatom.minhasfinancas.exception.ErroAutenticacao;
 import com.renatom.minhasfinancas.model.entity.Usuario;
 import com.renatom.minhasfinancas.model.repository.UsuarioRepository;
 import com.renatom.minhasfinancas.service.impl.UsuarioServiceImpl;
@@ -33,7 +36,7 @@ public class UsuarioServiceTest {
 	@MockBean
 	UsuarioRepository repository;
 	
-	@Before
+//	@Before(value = "teste")
 	public void setUp() {
 		service = new UsuarioServiceImpl(repository);
 	}
@@ -53,6 +56,33 @@ public class UsuarioServiceTest {
 		
 		// verificação 
 		Assertions.assertThat(result).isNotNull();
+	}
+	
+	@Test
+	public void deveLancarErroQuandoNaoEncontrarUsuarioCadastradoComOEmailInformado() {
+		//cenario
+		Mockito.when(repository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+		
+		//acao
+		Throwable exception = Assertions.catchThrowable(() -> service.autenticar("email@email.com", "senha"));
+		Assertions.assertThat(exception)
+			.isInstanceOf(ErroAutenticacao.class)
+			.hasMessage("Usuario não encontrado para o email informado!");
+	}
+	
+	
+	@Test
+	public void deveLancarErroQuandoSenhaNaoBater() {
+		// cenario 
+		String senha = "senha";
+		Usuario usuario = Usuario.builder().email("email@email.com").senha(senha).build();
+		Mockito.when(repository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(usuario));
+		
+		//acao
+		Throwable exception = Assertions.catchThrowable(() -> service.autenticar("email@email.com", "123"));
+		Assertions.assertThat(exception)
+			.isInstanceOf(ErroAutenticacao.class)
+			.hasMessage("Senha inválida!");
 	}
 	
 	
