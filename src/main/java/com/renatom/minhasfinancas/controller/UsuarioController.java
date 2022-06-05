@@ -19,14 +19,12 @@ import com.renatom.minhasfinancas.service.UsuarioService;
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
 
-//	Para utilizar com o construtor deve retirar o @AUTOWIRED
-	@Autowired
 	private UsuarioService service;
 	
-//	Cria um construtor da classe 
-//	public UsuarioController( UsuarioService service) {
-//		this.service = service;
-//	}
+//	Cria um construtor da classe service 
+	public UsuarioController( UsuarioService service) {
+		this.service = service;
+	}
 	
 	@PostMapping("/auth")
 	public ResponseEntity autenticarUser(@RequestBody UsuarioDTO dto) {

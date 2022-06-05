@@ -17,7 +17,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 	
 	private UsuarioRepository repository;	
 
-	@Autowired
 	public UsuarioServiceImpl(UsuarioRepository repository) {
 		super();
 		this.repository = repository;
