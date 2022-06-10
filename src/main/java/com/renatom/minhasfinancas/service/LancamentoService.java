@@ -1,6 +1,7 @@
 package com.renatom.minhasfinancas.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.renatom.minhasfinancas.model.entity.Lancamento;
 import com.renatom.minhasfinancas.model.enums.StatusLancamento;
@@ -17,5 +18,9 @@ public interface LancamentoService {
 	List<Lancamento> buscar(Lancamento lancamentoFiltro);
 	
 	void atualizarStatus(Lancamento lancamento, StatusLancamento status);
+	
+	void validar(Lancamento lancamento);
+	
+	Optional<Lancamento> buscarPorId(Long id);
 
 }

@@ -20,13 +20,17 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import com.renatom.minhasfinancas.model.enums.StatusLancamento;
 import com.renatom.minhasfinancas.model.enums.TipoLancamento;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "lancamento", schema = "fincancas")
+@Table(name = "lancamento", schema = "financas")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Lancamento {
 	
 	@Id
@@ -34,7 +38,7 @@ public class Lancamento {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "descicao")
+	@Column(name = "descricao")
 	private String descricao;
 	
 	@Column(name = "mes")
@@ -46,7 +50,7 @@ public class Lancamento {
 	// Para relacionamento de tabelas: Many= muitos lancamentos toOne= para um usuario
 	@ManyToOne
 	@JoinColumn(name = "id_usuario")
-	private Usuario id_usuario;
+	private Usuario usuario;
 	
 	@Column(name ="valor")
 	private BigDecimal valor;
