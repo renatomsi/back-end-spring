@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.renatom.minhasfinancas.exception.RegraNegocioException;
 import com.renatom.minhasfinancas.model.entity.Lancamento;
 import com.renatom.minhasfinancas.model.enums.StatusLancamento;
+import com.renatom.minhasfinancas.model.enums.TipoLancamento;
 import com.renatom.minhasfinancas.model.repository.LancamentoRepository;
 import com.renatom.minhasfinancas.service.LancamentoService;
 
@@ -106,6 +107,23 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Override
 	public Optional<Lancamento> buscarPorId(Long id) {
 		return repository.findById(id);
+	}
+
+//	Capturando a soma das receitas e despesas para realizar a subtração 
+	@Override
+	public BigDecimal obterSaldoPorUsuario(Long id) {
+		BigDecimal receitas = repository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLancamento.RECEITA);
+		BigDecimal despesas = repository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLancamento.DESPESA);
+		
+		if (receitas == null) {
+			receitas = BigDecimal.ZERO;
+		}
+		
+		if (despesas == null) {
+			despesas = BigDecimal.ZERO;
+		}
+
+		return receitas.subtract(despesas);
 	}
 
 	

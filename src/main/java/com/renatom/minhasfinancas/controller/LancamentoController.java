@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.renatom.minhasfinancas.dto.AtualizarStatusDTO;
 import com.renatom.minhasfinancas.dto.LancamentoDTO;
 import com.renatom.minhasfinancas.exception.RegraNegocioException;
 import com.renatom.minhasfinancas.model.entity.Lancamento;
@@ -94,6 +95,28 @@ public class LancamentoController {
 		}).orElseGet(() -> new ResponseEntity("Lançamento não encontrado na base de Dados.", HttpStatus.BAD_REQUEST));
 	}
 
+//	Realiza a atualização do status do lancamento passando o id e o status
+	@PutMapping("/{id}/atualiza-status")
+	public ResponseEntity atualizaStatus(@PathVariable("id") Long id, @RequestBody AtualizarStatusDTO dto) {
+		return service.buscarPorId(id).map(entidade -> {
+			StatusLancamento statusSelecionado = StatusLancamento.valueOf(dto.getStatus());
+
+			if (statusSelecionado == null) {
+				return ResponseEntity.badRequest()
+						.body("Não foi possivel atualizar o status do lançamento, envie um status válido");
+			}
+
+			try {
+				entidade.setStatus(statusSelecionado);
+				service.atualizar(entidade);
+				return ResponseEntity.ok(entidade);
+			} catch (Exception e) {
+				return ResponseEntity.badRequest().body(e.getMessage());
+			}
+		}).orElseGet(() -> new ResponseEntity("Lançamento não encontrado na base de Dados.", HttpStatus.BAD_REQUEST));
+
+	}
+
 //	Realizado o metodo de buscar por id para capturar o Lancamento e em seguida deletar.
 	@DeleteMapping("{id}")
 	public ResponseEntity deletar(@PathVariable Long id) {
@@ -129,5 +152,7 @@ public class LancamentoController {
 
 		return lancamento;
 	}
+	
+	
 
 }

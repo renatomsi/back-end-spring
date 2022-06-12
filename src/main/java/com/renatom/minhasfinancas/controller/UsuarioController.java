@@ -1,8 +1,13 @@
 package com.renatom.minhasfinancas.controller;
 
+import java.math.BigDecimal;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +18,7 @@ import com.renatom.minhasfinancas.dto.UsuarioDTO;
 import com.renatom.minhasfinancas.exception.ErroAutenticacao;
 import com.renatom.minhasfinancas.exception.RegraNegocioException;
 import com.renatom.minhasfinancas.model.entity.Usuario;
+import com.renatom.minhasfinancas.service.LancamentoService;
 import com.renatom.minhasfinancas.service.UsuarioService;
 
 @RestController
@@ -20,10 +26,12 @@ import com.renatom.minhasfinancas.service.UsuarioService;
 public class UsuarioController {
 
 	private UsuarioService service;
+	private LancamentoService lancamentoService;
 	
 //	Cria um construtor da classe service 
-	public UsuarioController( UsuarioService service) {
+	public UsuarioController( UsuarioService service, LancamentoService lancamentoService) {
 		this.service = service;
+		this.lancamentoService = lancamentoService;
 	}
 	
 	@PostMapping("/auth")
@@ -51,6 +59,20 @@ public class UsuarioController {
 		} catch (RegraNegocioException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
+	}
+	
+//	Criado um repositor para capturar a soma das despesas e receitas e no service fazer a logica de subtração para mostrar o saldo.
+	@GetMapping("{id}/saldo")
+	public ResponseEntity obterSaldoUSuario(@PathVariable("id") Long id) {
+		Optional<Usuario> usuario = service.obterPorId(id);
+		
+		if(!usuario.isPresent()) {
+			return new ResponseEntity(HttpStatus.NOT_FOUND);
+		}
+		
+		BigDecimal saldo = lancamentoService.obterSaldoPorUsuario(id);
+		
+		return ResponseEntity.ok(saldo);
 	}
 
 }
