@@ -90,7 +90,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		}
 		
 		if (lancamento.getUsuario() == null || lancamento.getUsuario().getId() == null) {
-			throw new RegraNegocioException("Informe um Usuário");
+			throw new RegraNegocioException("Informe um Usuário.");
 		}
 		
 //		Metodo compare To compara se o getValor é maior que zero: sim => retorna 1 , igual => retorna 0 , menor => retorna -1
