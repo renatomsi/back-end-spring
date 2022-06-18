@@ -43,13 +43,14 @@ public class LancamentoController {
 //	Chamado o metodo de buscar por lancamento passando a entidade lancamentoFiltro com os filtros enviados no parametro
 	@GetMapping
 	public ResponseEntity buscar(@RequestParam(value = "descricao", required = false) String descricao,
-			@RequestParam(value = "ano", required = false) Integer ano,
+			@RequestParam(value = "ano", required = false) Integer ano, @RequestParam(value = "tipo", required = false) TipoLancamento tipo,
 			@RequestParam(value = "mes", required = false) Integer mes, @RequestParam("usuario") Long idUsuario) {
 
 		Lancamento lancamentoFiltro = new Lancamento();
 		lancamentoFiltro.setDescricao(descricao);
 		lancamentoFiltro.setAno(ano);
 		lancamentoFiltro.setMes(mes);
+		lancamentoFiltro.setTipo(tipo);
 
 		Optional<Usuario> usuario = usuarioService.obterPorId(idUsuario);
 		if (usuario.isEmpty()) {
