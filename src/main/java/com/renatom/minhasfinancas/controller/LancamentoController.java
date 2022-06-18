@@ -64,6 +64,13 @@ public class LancamentoController {
 		return ResponseEntity.ok(lancamentos);
 
 	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity buscarLancamentoPorId(@PathVariable Long id) {
+		return service.buscarPorId(id)
+				.map(lancamento -> new ResponseEntity(converterLancamentoDto(lancamento), HttpStatus.OK))
+				.orElseGet(() -> new ResponseEntity(HttpStatus.NOT_FOUND));
+	}
 
 //	Transforma a resposta de converterLancamento em uma variavel e tenta salvar a mesma , 
 //	tambem salvando a resposta na mesma variavel para que possa retornar na requisição OK
@@ -125,6 +132,19 @@ public class LancamentoController {
 			service.deletar(entidade);
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}).orElseGet(() -> new ResponseEntity("Lançamento não encontrado na base de Dados.", HttpStatus.BAD_REQUEST));
+	}
+	
+	private LancamentoDTO converterLancamentoDto(Lancamento lancamento) {
+		return LancamentoDTO.builder()
+				.id(lancamento.getId())
+				.descricao(lancamento.getDescricao())
+				.valor(lancamento.getValor())
+				.ano(lancamento.getAno())
+				.mes(lancamento.getMes())
+				.tipo(lancamento.getTipo().name())
+				.status(lancamento.getStatus().name())
+				.usuario(lancamento.getUsuario().getId())
+				.build();
 	}
 
 //	Metodo para converter o lancamento dto em lancamento
